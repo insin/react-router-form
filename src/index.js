@@ -54,7 +54,9 @@ var Form = React.createClass({
 
     if (allowTransition) {
       if (this.props.method === 'GET') {
-        this.transitionTo(this.props.to, this.props.params, this.props.query)
+        this.transitionTo(this.props.to,
+                          this.props.params,
+                          assign({}, this.props.query, data))
       }
 
       // TODO POST data

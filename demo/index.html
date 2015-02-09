@@ -17,9 +17,11 @@
     margin-right: 1em;
     margin-bottom: 1em;
     vertical-align: top;
+    text-align: center;
   }
   .Contact img {
-    max-width: 100%;
+    width: 100%;
+    border-radius: 50%;
   }
   </style>
 </head>
@@ -39,7 +41,7 @@ var CONTACTS = [{
 }, {
   first: 'Michael',
   last: 'Jackson',
-  avatar: 'https://pbs.twimg.com/profile_images/3290627244/4e88243b7d2bf43553fce25499feec81.png'
+  avatar: 'https://pbs.twimg.com/profile_images/555089763489689600/dhab7R3J.png'
 }, {
   first: 'Jeremy',
   last: 'Ashkenas',
@@ -117,8 +119,7 @@ var NewContact = React.createClass({
 var CreateContact = React.createClass({
   statics: {
     willTransitionTo: function(transition, params, query) {
-      console.log(query)
-      CONTACTS.unshift(query)
+      CONTACTS.push(query)
       transition.redirect('/')
     }
   },
