@@ -25,6 +25,7 @@ var Form = React.createClass({
   mixins: [Navigation, State],
 
   propTypes: {
+    component: React.PropTypes.any,
     to: React.PropTypes.string.isRequired,
     params: React.PropTypes.object,
     query: React.PropTypes.object,
@@ -33,6 +34,7 @@ var Form = React.createClass({
 
   getDefaultProps() {
     return {
+      component: 'form',
       method: 'GET'
     }
   },
@@ -76,7 +78,7 @@ var Form = React.createClass({
       onSubmit: this.handleSubmit
     })
 
-    return React.createElement('form', props, this.props.children)
+    return React.createElement(this.props.component, props, this.props.children)
   }
 })
 
