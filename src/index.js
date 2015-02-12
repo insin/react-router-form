@@ -56,12 +56,17 @@ var Form = React.createClass({
 
     if (allowTransition) {
       if (this.props.method === 'GET') {
+        // GET submissions use the query string, so just marge form data into it
         this.transitionTo(this.props.to,
                           this.props.params,
                           assign({}, this.props.query, data))
       }
-
-      // TODO POST data
+      else {
+        // HACK - add data to the query string along with a dummy method indicator
+        this.transitionTo(this.props.to,
+                          this.props.params,
+                          assign({}, this.props.query, data, {_method: this.props.method}))
+      }
     }
   },
 
