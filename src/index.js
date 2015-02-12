@@ -62,10 +62,11 @@ var Form = React.createClass({
                           assign({}, this.props.query, data))
       }
       else {
-        // HACK - add data to the query string along with a dummy method indicator
+        // For other methods, pass the method and data as a payload object
         this.transitionTo(this.props.to,
                           this.props.params,
-                          assign({}, this.props.query, data, {_method: this.props.method}))
+                          this.props.query,
+                          {body: data, method: this.props.method})
       }
     }
   },
