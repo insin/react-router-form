@@ -165,9 +165,9 @@ var NewContact = React.createClass({
     }
   },
 
-  _onSubmit(e, data) {
+  _onSubmit(e, contact) {
     var error = this.state.error
-    if (Object.keys(data).some(field => data[field] === '')) {
+    if (Object.keys(contact).some(prop => contact[prop] === '')) {
       e.preventDefault()
       error = 'All fields are required.'
     }
