@@ -11,6 +11,10 @@
   body {
     font-family: 'Open Sans', sans-serif;
   }
+  .error {
+    font-weight: bold;
+    color: #f22;
+  }
   .Contact {
     width: 200px;
     display: inline-block;
@@ -33,6 +37,37 @@
 </p>
 <div id="app"></div>
 <script type="text/jsx;harmony=true">void function() { 'use strict';
+
+function assign(target, sources) {
+  if (target == null) {
+    throw new TypeError('Object.assign target cannot be null or undefined');
+  }
+
+  var to = Object(target);
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
+    var nextSource = arguments[nextIndex];
+    if (nextSource == null) {
+      continue;
+    }
+
+    var from = Object(nextSource);
+
+    // We don't currently support accessors nor proxies. Therefore this
+    // copy cannot throw. If we ever supported this then we must handle
+    // exceptions and side-effects. We don't support symbols so they won't
+    // be transferred.
+
+    for (var key in from) {
+      if (hasOwnProperty.call(from, key)) {
+        to[key] = from[key];
+      }
+    }
+  }
+
+  return to;
+};
 
 var CONTACTS = [{
   first: 'Ryan',
@@ -72,13 +107,30 @@ var CONTACTS = [{
   avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/matt.jpeg'
 }]
 
+var ContactService = {
+  add(contact, cb) {
+    if (!contact.first || !contact.last || !contact.avatar) {
+      return cb(null, 'All fields are required.')
+    }
+    // Simulated server-only check
+    var dupe = CONTACTS.some(function(existing) {
+      return existing.first == contact.first && existing.last == contact.last
+    })
+    if (dupe) {
+      return cb(null, 'Duplicate contact name.')
+    }
+    CONTACTS.push(contact)
+    cb(null)
+  }
+}
+
 var Form = ReactRouterForm
 var {DefaultRoute, Link, Navigation, Route, RouteHandler} = ReactRouter
 
 var App = React.createClass({
   render() {
     return <div className="App">
-      <RouteHandler/>
+      <RouteHandler {...this.props}/>
     </div>
   }
 })
@@ -101,14 +153,37 @@ var Contacts = React.createClass({
 })
 
 var NewContact = React.createClass({
+  getInitialState() {
+    return {
+      error: this.props.query._error || null
+    }
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.query._error) {
+      this.setState({error: nextProps.query._error})
+    }
+  },
+
+  _onSubmit(e, data) {
+    var error = this.state.error
+    if (Object.keys(data).some(field => data[field] === '')) {
+      e.preventDefault()
+      error = 'All fields are required.'
+    }
+    this.setState({error})
+  },
+
   render() {
+    var {query} = this.props
     return <div>
       <h1>New Contact</h1>
       <div>
-        <Form to="createContact">
-          <p><input name="first" placeholder="first name"/></p>
-          <p><input name="last" placeholder="last name"/></p>
-          <p><input name="avatar" placeholder="avatar url"/></p>
+        <Form to="createContact" onSubmit={this._onSubmit}>
+          {this.state.error && <p className="error">{this.state.error}</p>}
+          <p><input name="first" placeholder="first name" defaultValue={query.first || ''}/></p>
+          <p><input name="last" placeholder="last name" defaultValue={query.last || ''}/></p>
+          <p><input name="avatar" placeholder="avatar url" defaultValue={query.avatar || ''}/></p>
           <p><button type="submit">Add</button></p>
         </Form>
       </div>
@@ -118,13 +193,16 @@ var NewContact = React.createClass({
 
 var CreateContact = React.createClass({
   statics: {
-    willTransitionTo: function(transition, params, query) {
-      CONTACTS.push({
-        first: query.first || '<First>',
-        last: query.last || '<Last>',
-        avatar: query.avatar || 'https://pbs.twimg.com/profile_images/1926363801/twitter-egg_400x400.png'
+    willTransitionTo: function(transition, params, query, cb) {
+      ContactService.add(query, function(err, errorMessage) {
+        if (!errorMessage) {
+          transition.redirect('contacts')
+        }
+        else {
+          transition.redirect('newContact', {}, assign(query, {_error: errorMessage}))
+        }
+        cb()
       })
-      transition.redirect('/')
     }
   },
 
@@ -140,7 +218,7 @@ var routes = <Route name="contacts" path="/" handler={App}>
 </Route>
 
 ReactRouter.run(routes, function(Handler, state) {
-  React.render(<Handler/>, document.getElementById('app'))
+  React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
 })
 
 }()</script>
