@@ -109,7 +109,7 @@ var CONTACTS = [{
 
 var ContactService = {
   add(contact, cb) {
-    if (!contact.first || !contact.last || !contact.avatar) {
+    if (!contact.first || !contact.last || !contact.avatar || !contact.PIN) {
       return cb(null, 'All fields are required.')
     }
     // Simulated server-only check
@@ -184,6 +184,7 @@ var NewContact = React.createClass({
           <p><input name="first" placeholder="first name" defaultValue={query.first || ''}/></p>
           <p><input name="last" placeholder="last name" defaultValue={query.last || ''}/></p>
           <p><input name="avatar" placeholder="avatar url" defaultValue={query.avatar || ''}/></p>
+          <p><input name="PIN" type="password" placeholder="PIN" defaultValue={query.PIN || ''}/></p>
           <p><button type="submit">Add</button></p>
         </Form>
       </div>
