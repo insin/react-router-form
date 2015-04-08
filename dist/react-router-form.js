@@ -1,5 +1,5 @@
 /*!
- * react-router-form 1.0.0 (dev build at Thu, 12 Feb 2015 12:38:08 GMT) - https://github.com/insin/react-router-form
+ * react-router-form 1.0.0 (dev build at Thu, 05 Mar 2015 15:55:49 GMT) - https://github.com/insin/react-router-form
  * MIT Licensed
  */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.ReactRouterForm=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -67,11 +67,10 @@ var Form = React.createClass({
                           assign({}, this.props.query, data))
       }
       else {
-        // For other methods, pass the method and data as a payload object
+        // HACK - add data to the query string along with a dummy method indicator
         this.transitionTo(this.props.to,
                           this.props.params,
-                          this.props.query,
-                          {body: data, method: this.props.method})
+                          assign({}, this.props.query, data, {_method: this.props.method}))
       }
     }
   },
@@ -116,6 +115,7 @@ var CHECKED_INPUT_TYPES = {
 
 var TRIM_RE = /^\s+|\s+$/g
 
+var slice = Array.prototype.slice
 var toString = Object.prototype.toString
 
 /**
@@ -218,8 +218,8 @@ function getNamedFormElementData(form, elementName, options) {
 /**
  * @param {HTMLElement} element a form element.
  * @param {booleam} trim should values for text entry inputs be trimmed?
- * @return {(string|Array.<string>)} the element's submittable value(s), or null
- *   if it had none.
+ * @return {(string|Array.<string>|File|Array.<File>)} the element's submittable
+ *   value(s), or null if it had none.
  */
 function getFormElementValue(element, trim) {
   var value = null
@@ -228,8 +228,10 @@ function getFormElementValue(element, trim) {
     if (element.options.length) {
       value = element.options[element.selectedIndex].value
     }
+    return value
   }
-  else if (element.type === 'select-multiple') {
+
+  if (element.type === 'select-multiple') {
     value = []
     for (var i = 0, l = element.options.length; i < l; i++) {
       if (element.options[i].selected) {
@@ -239,8 +241,26 @@ function getFormElementValue(element, trim) {
     if (value.length === 0) {
       value = null
     }
+    return value
   }
-  else if (!CHECKED_INPUT_TYPES[element.type]) {
+
+  // If a file input doesn't have a files attribute, fall through to using its
+  // value attribute.
+  if (element.type === 'file' && 'files' in element) {
+    if (element.multiple) {
+      value = slice.call(element.files)
+      if (value.length === 0) {
+        value = null
+      }
+    }
+    else {
+      // Should be null if not present, according to the spec
+      value = element.files[0]
+    }
+    return value
+  }
+
+  if (!CHECKED_INPUT_TYPES[element.type]) {
     value = (trim ? element.value.replace(TRIM_RE, '') : element.value)
   }
   else if (element.checked) {
