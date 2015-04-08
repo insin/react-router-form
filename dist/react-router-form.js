@@ -1,14 +1,13 @@
 /*!
- * react-router-form 1.0.0 (dev build at Thu, 05 Mar 2015 15:55:49 GMT) - https://github.com/insin/react-router-form
+ * react-router-form 1.0.0 (dev build at Wed, 08 Apr 2015 10:07:29 GMT) - https://github.com/insin/react-router-form
  * MIT Licensed
  */
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.ReactRouterForm=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.ReactRouterForm = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 var getFormData = require('get-form-data')
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null)
 var assign = require('react/lib/Object.assign')
-var $__0=   (typeof window !== "undefined" ? window.ReactRouter : typeof global !== "undefined" ? global.ReactRouter : null),Navigation=$__0.Navigation,State=$__0.State
 
 /**
  * <Form> components are used to create a <form> element that submits its input
@@ -27,7 +26,9 @@ var Form = React.createClass({
 
   displayName: 'Form',
 
-  mixins: [Navigation, State],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
 
   propTypes: {
     component: React.PropTypes.any,
@@ -45,12 +46,12 @@ var Form = React.createClass({
   },
 
   handleSubmit:function(event) {
-    var data = getFormData(event.target)
+    var formData = getFormData(event.target)
     var allowTransition = true
     var submitResult
 
     if (this.props.onSubmit) {
-      submitResult = this.props.onSubmit(event, data)
+      submitResult = this.props.onSubmit(event, formData)
     }
 
     if (submitResult === false || event.defaultPrevented === true) {
@@ -62,15 +63,19 @@ var Form = React.createClass({
     if (allowTransition) {
       if (this.props.method === 'GET') {
         // GET submissions use the query string, so just marge form data into it
-        this.transitionTo(this.props.to,
-                          this.props.params,
-                          assign({}, this.props.query, data))
+        this.context.router.transitionTo(
+          this.props.to,
+          this.props.params,
+          assign({}, this.props.query, formData)
+        )
       }
       else {
         // HACK - add data to the query string along with a dummy method indicator
-        this.transitionTo(this.props.to,
-                          this.props.params,
-                          assign({}, this.props.query, data, {_method: this.props.method}))
+        this.context.router.transitionTo(
+          this.props.to,
+          this.props.params,
+          assign({}, this.props.query, formData, {_method: this.props.method})
+        )
       }
     }
   },
@@ -79,7 +84,7 @@ var Form = React.createClass({
    * Returns the value of the "action" attribute to use on the DOM element.
    */
   getAction:function() {
-    return this.makeHref(this.props.to, this.props.params, this.props.query)
+    return this.context.router.makeHref(this.props.to, this.props.params, this.props.query)
   },
 
   render:function() {
@@ -102,10 +107,11 @@ var NODE_LIST_CLASSES = {
 , '[object RadioNodeList]': true
 }
 
-var BUTTON_INPUT_TYPES = {
+var IGNORED_INPUT_TYPES = {
   'button': true
 , 'reset': true
 , 'submit': true
+, 'fieldset': true
 }
 
 var CHECKED_INPUT_TYPES = {
@@ -141,7 +147,7 @@ function getFormData(form, options) {
   // Get unique submittable element names for the form
   for (var i = 0, l = form.elements.length; i < l; i++) {
     var element = form.elements[i]
-    if (BUTTON_INPUT_TYPES[element.type] || element.disabled) {
+    if (IGNORED_INPUT_TYPES[element.type] || element.disabled) {
       continue
     }
     elementName = element.name || element.id
@@ -275,7 +281,7 @@ getFormData.getNamedFormElementData = getNamedFormElementData
 module.exports = getFormData
 },{}],3:[function(require,module,exports){
 /**
- * Copyright 2014, Facebook, Inc.
+ * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -286,6 +292,8 @@ module.exports = getFormData
  */
 
 // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign
+
+'use strict';
 
 function assign(target, sources) {
   if (target == null) {
@@ -316,7 +324,7 @@ function assign(target, sources) {
   }
 
   return to;
-};
+}
 
 module.exports = assign;
 
