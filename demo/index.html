@@ -4,12 +4,15 @@
   <title>react-router-form</title>
   <script src="http://fb.me/react-0.13.1.js"></script>
   <script src="http://fb.me/JSXTransformer-0.13.1.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/react-router/0.13.2/ReactRouter.js"></script>
+  <script src="ReactRouter-0.13.2+828.js"></script>
   <script src="../dist/react-router-form.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
   <style>
   body {
     font-family: 'Open Sans', sans-serif;
+  }
+  code {
+    font-size: 1.25em;
   }
   .error {
     font-weight: bold;
@@ -35,37 +38,6 @@
 
 var Form = ReactRouterForm
 var {DefaultRoute, Link, Route, RouteHandler} = ReactRouter
-
-function assign(target, sources) {
-  if (target == null) {
-    throw new TypeError('Object.assign target cannot be null or undefined');
-  }
-
-  var to = Object(target);
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
-    var nextSource = arguments[nextIndex];
-    if (nextSource == null) {
-      continue;
-    }
-
-    var from = Object(nextSource);
-
-    // We don't currently support accessors nor proxies. Therefore this
-    // copy cannot throw. If we ever supported this then we must handle
-    // exceptions and side-effects. We don't support symbols so they won't
-    // be transferred.
-
-    for (var key in from) {
-      if (hasOwnProperty.call(from, key)) {
-        to[key] = from[key];
-      }
-    }
-  }
-
-  return to;
-};
 
 var CONTACTS = [{
   first: 'Ryan',
@@ -126,10 +98,16 @@ var ContactService = {
 var App = React.createClass({
   render() {
     return <div className="App">
+      <p><strong>
+        Note: this demo depends on changes to React Router implemented
+        in <a href="https://github.com/rackt/react-router/pull/828">pull request #828</a>;
+        it uses a <a href="ReactRouter-0.13.2+828.js">custom build</a> of React Router 0.13.2 plus
+        the pull request changes.
+      </strong></p>
       <p>
         Reuses components from the <a href="http://react-router-mega-demo.herokuapp.com/">React Router Mega Demo</a>,
-        but uses the <code>&lt;Form&gt;</code> component from <a href="https://github.com/insin/react-router-form">react-router-form</a>
-        to automatically retrieve and submit GET form data.
+        but uses the <code>&lt;Form&gt;</code> component from <a href="https://github.com/insin/react-router-form">react-router-form</a> to
+        automatically extract form data and pass it to a route-handling component's <code>willTransitionTo()</code> method.
       </p>
       <RouteHandler {...this.props}/>
     </div>
@@ -154,15 +132,20 @@ var Contacts = React.createClass({
 })
 
 var NewContact = React.createClass({
+  propTypes: {
+    data: React.PropTypes.object,
+    error: React.PropTypes.string
+  },
+
   getInitialState() {
     return {
-      error: this.props.query._error || null
+      error: this.props.error || null
     }
   },
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.query._error) {
-      this.setState({error: nextProps.query._error})
+    if (nextProps.error) {
+      this.setState({error: nextProps.error})
     }
   },
 
@@ -176,19 +159,19 @@ var NewContact = React.createClass({
   },
 
   render() {
-    var {query} = this.props
+    var data = this.props.data || {}
     return <div>
       <h1>New Contact</h1>
       <p><em>
         (Enter a duplicate name to simulate a service call resulting in an error response)
       </em></p>
       <div>
-        <Form to="createContact" onSubmit={this._onSubmit}>
+        <Form method="POST" to="createContact" onSubmit={this._onSubmit}>
           {this.state.error && <p className="error">{this.state.error}</p>}
-          <p><input name="first" placeholder="first name" defaultValue={query.first || ''}/></p>
-          <p><input name="last" placeholder="last name" defaultValue={query.last || ''}/></p>
-          <p><input name="avatar" placeholder="avatar url" defaultValue={query.avatar || ''}/></p>
-          <p><input name="PIN" type="password" placeholder="PIN" defaultValue={query.PIN || ''}/></p>
+          <p><input name="first" placeholder="first name" defaultValue={data.first || ''}/></p>
+          <p><input name="last" placeholder="last name" defaultValue={data.last || ''}/></p>
+          <p><input name="avatar" placeholder="avatar url" defaultValue={data.avatar || ''}/></p>
+          <p><input name="PIN" type="password" placeholder="PIN" defaultValue={data.PIN || ''}/></p>
           <p><button type="submit">Add</button> or <Link to="/">Cancel</Link></p>
         </Form>
       </div>
@@ -198,13 +181,13 @@ var NewContact = React.createClass({
 
 var CreateContact = React.createClass({
   statics: {
-    willTransitionTo(transition, params, query, cb) {
-      ContactService.add(query, (err, errorMessage) => {
+    willTransitionTo(transition, params, query, cb, req) {
+      ContactService.add(req.body, (err, errorMessage) => {
         if (!errorMessage) {
           transition.redirect('contacts')
         }
         else {
-          transition.redirect('newContact', {}, assign(query, {_error: errorMessage}))
+          transition.redirect('newContact', {}, {}, {error: errorMessage, data: req.body})
         }
         cb()
       })
@@ -223,7 +206,10 @@ var routes = <Route name="contacts" path="/" handler={App}>
 </Route>
 
 ReactRouter.run(routes, (Handler, state) => {
-  React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
+  var {path, params, query, data} = state
+  console.log(JSON.stringify({path, params, query, data}))
+  React.render(<Handler params={params} query={query} {...data}/>,
+               document.getElementById('app'))
 })
 
 }()</script>

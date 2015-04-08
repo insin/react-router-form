@@ -56,7 +56,7 @@ var Form = React.createClass({
     event.preventDefault()
 
     if (allowTransition) {
-      if (this.props.method === 'GET') {
+      if (this.props.method.toUpperCase() === 'GET') {
         // GET submissions use the query string, so just marge form data into it
         this.context.router.transitionTo(
           this.props.to,
@@ -65,11 +65,13 @@ var Form = React.createClass({
         )
       }
       else {
-        // For other methods, pass the method and data as a payload object
-        this.transitionTo(this.props.to,
-                          this.props.params,
-                          this.props.query,
-                          {body: data, method: this.props.method})
+        // For other methods, pass the method and form body as transition data
+        this.context.router.transitionTo(
+          this.props.to,
+          this.props.params,
+          this.props.query,
+          {body: formData, method: this.props.method}
+        )
       }
     }
   },
