@@ -3,7 +3,6 @@
 var getFormData = require('get-form-data')
 var React = require('react')
 var assign = require('react/lib/Object.assign')
-var {Navigation, State} = require('react-router')
 
 /**
  * <Form> components are used to create a <form> element that submits its input
@@ -22,7 +21,9 @@ var Form = React.createClass({
 
   displayName: 'Form',
 
-  mixins: [Navigation, State],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
 
   propTypes: {
     component: React.PropTypes.any,
@@ -40,12 +41,12 @@ var Form = React.createClass({
   },
 
   handleSubmit(event) {
-    var data = getFormData(event.target)
+    var formData = getFormData(event.target)
     var allowTransition = true
     var submitResult
 
     if (this.props.onSubmit) {
-      submitResult = this.props.onSubmit(event, data)
+      submitResult = this.props.onSubmit(event, formData)
     }
 
     if (submitResult === false || event.defaultPrevented === true) {
@@ -57,15 +58,19 @@ var Form = React.createClass({
     if (allowTransition) {
       if (this.props.method === 'GET') {
         // GET submissions use the query string, so just marge form data into it
-        this.transitionTo(this.props.to,
-                          this.props.params,
-                          assign({}, this.props.query, data))
+        this.context.router.transitionTo(
+          this.props.to,
+          this.props.params,
+          assign({}, this.props.query, formData)
+        )
       }
       else {
         // HACK - add data to the query string along with a dummy method indicator
-        this.transitionTo(this.props.to,
-                          this.props.params,
-                          assign({}, this.props.query, data, {_method: this.props.method}))
+        this.context.router.transitionTo(
+          this.props.to,
+          this.props.params,
+          assign({}, this.props.query, formData, {_method: this.props.method})
+        )
       }
     }
   },
@@ -74,7 +79,7 @@ var Form = React.createClass({
    * Returns the value of the "action" attribute to use on the DOM element.
    */
   getAction() {
-    return this.makeHref(this.props.to, this.props.params, this.props.query)
+    return this.context.router.makeHref(this.props.to, this.props.params, this.props.query)
   },
 
   render() {

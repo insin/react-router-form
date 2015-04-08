@@ -2,9 +2,9 @@
 <head>
   <meta charset="UTF-8">
   <title>react-router-form</title>
-  <script src="http://fb.me/react-0.12.2.js"></script>
-  <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
-  <script src="https://cdn.rawgit.com/rackt/react-router/master/build/global/ReactRouter.js"></script>
+  <script src="http://fb.me/react-0.13.1.js"></script>
+  <script src="http://fb.me/JSXTransformer-0.13.1.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/react-router/0.13.2/ReactRouter.js"></script>
   <script src="../dist/react-router-form.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
   <style>
@@ -30,13 +30,11 @@
   </style>
 </head>
 <body>
-<p>
-  Reuses components from the <a href="http://react-router-mega-demo.herokuapp.com/">React Router Mega Demo</a>,
-  but uses the <code>&lt;Form&gt;</code> component from <a href="https://github.com/insin/react-router-form">react-router-form</a>
-  to automatically retrieve and submit GET form data.
-</p>
 <div id="app"></div>
 <script type="text/jsx;harmony=true">void function() { 'use strict';
+
+var Form = ReactRouterForm
+var {DefaultRoute, Link, Route, RouteHandler} = ReactRouter
 
 function assign(target, sources) {
   if (target == null) {
@@ -76,7 +74,7 @@ var CONTACTS = [{
 }, {
   first: 'Michael',
   last: 'Jackson',
-  avatar: 'https://pbs.twimg.com/profile_images/555089763489689600/dhab7R3J.png'
+  avatar: 'https://pbs.twimg.com/profile_images/574612921541505024/EBEUav5W_400x400.jpeg'
 }, {
   first: 'Jeremy',
   last: 'Ashkenas',
@@ -113,8 +111,9 @@ var ContactService = {
       return cb(null, 'All fields are required.')
     }
     // Simulated server-only check
-    var dupe = CONTACTS.some(function(existing) {
-      return existing.first == contact.first && existing.last == contact.last
+    var dupe = CONTACTS.some(existing => {
+      return existing.first.toUpperCase() == contact.first.toUpperCase() &&
+             existing.last.toUpperCase() == contact.last.toUpperCase()
     })
     if (dupe) {
       return cb(null, 'Duplicate contact name.')
@@ -124,12 +123,14 @@ var ContactService = {
   }
 }
 
-var Form = ReactRouterForm
-var {DefaultRoute, Link, Navigation, Route, RouteHandler} = ReactRouter
-
 var App = React.createClass({
   render() {
     return <div className="App">
+      <p>
+        Reuses components from the <a href="http://react-router-mega-demo.herokuapp.com/">React Router Mega Demo</a>,
+        but uses the <code>&lt;Form&gt;</code> component from <a href="https://github.com/insin/react-router-form">react-router-form</a>
+        to automatically retrieve and submit GET form data.
+      </p>
       <RouteHandler {...this.props}/>
     </div>
   }
@@ -178,6 +179,9 @@ var NewContact = React.createClass({
     var {query} = this.props
     return <div>
       <h1>New Contact</h1>
+      <p><em>
+        (Enter a duplicate name to simulate a service call resulting in an error response)
+      </em></p>
       <div>
         <Form to="createContact" onSubmit={this._onSubmit}>
           {this.state.error && <p className="error">{this.state.error}</p>}
@@ -185,7 +189,7 @@ var NewContact = React.createClass({
           <p><input name="last" placeholder="last name" defaultValue={query.last || ''}/></p>
           <p><input name="avatar" placeholder="avatar url" defaultValue={query.avatar || ''}/></p>
           <p><input name="PIN" type="password" placeholder="PIN" defaultValue={query.PIN || ''}/></p>
-          <p><button type="submit">Add</button></p>
+          <p><button type="submit">Add</button> or <Link to="/">Cancel</Link></p>
         </Form>
       </div>
     </div>
@@ -194,8 +198,8 @@ var NewContact = React.createClass({
 
 var CreateContact = React.createClass({
   statics: {
-    willTransitionTo: function(transition, params, query, cb) {
-      ContactService.add(query, function(err, errorMessage) {
+    willTransitionTo(transition, params, query, cb) {
+      ContactService.add(query, (err, errorMessage) => {
         if (!errorMessage) {
           transition.redirect('contacts')
         }
@@ -218,7 +222,7 @@ var routes = <Route name="contacts" path="/" handler={App}>
   <Route name="createContact" handler={CreateContact}/>
 </Route>
 
-ReactRouter.run(routes, function(Handler, state) {
+ReactRouter.run(routes, (Handler, state) => {
   React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
 })
 
