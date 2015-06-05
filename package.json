@@ -2,7 +2,7 @@
   "name": "react-router-form",
   "description": "",
   "version": "1.0.0",
-  "main": "./lib/index.js",
+  "main": "./src/index.js",
   "standalone": "ReactRouterForm",
   "homepage": "https://github.com/insin/react-router-form",
   "license": "MIT",
