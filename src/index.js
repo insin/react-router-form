@@ -79,7 +79,7 @@ var Form = React.createClass({
   },
 
   render() {
-    var {component, dataKey, methodKey, onSubmit, query, state, to, ...props} = this.props
+    var {component, dataKey, extractFormData, methodKey, onSubmit, query, state, to, ...props} = this.props
     var {history} = this.context
 
     props.onSubmit = this.handleSubmit
