@@ -2,9 +2,11 @@
 <head>
   <meta charset="UTF-8">
   <title>react-router-form</title>
-  <script src="http://fb.me/react-0.13.1.js"></script>
-  <script src="http://fb.me/JSXTransformer-0.13.1.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/react-router/0.13.2/ReactRouter.js"></script>
+  <script src="http://fb.me/react-0.14.0.js"></script>
+  <script src="http://fb.me/react-dom-0.14.0.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router/1.0.0-rc1/ReactRouter.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.25/browser-polyfill.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.25/browser.min.js"></script>
   <script src="../dist/react-router-form.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
   <style>
@@ -31,200 +33,168 @@
 </head>
 <body>
 <div id="app"></div>
-<script type="text/jsx;harmony=true">void function() { 'use strict';
+<script type="text/babel">
+(function() {
+  /* global React ReactDOM ReactRouter ReactRouterForm*/
+  'use strict'
 
-var Form = ReactRouterForm
-var {DefaultRoute, Link, Route, RouteHandler} = ReactRouter
+  var Form = ReactRouterForm
+  var {IndexRoute, Link, Route, Router} = ReactRouter
 
-function assign(target, sources) {
-  if (target == null) {
-    throw new TypeError('Object.assign target cannot be null or undefined');
-  }
+  var CONTACTS = [{
+    first: 'Ryan',
+    last: 'Florence',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/ryan.jpg'
+  }, {
+    first: 'Michael',
+    last: 'Jackson',
+    avatar: 'https://pbs.twimg.com/profile_images/574612921541505024/EBEUav5W_400x400.jpeg'
+  }, {
+    first: 'Jeremy',
+    last: 'Ashkenas',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/jeremy.jpg'
+  }, {
+    first: 'Yehuda',
+    last: 'Katz',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/yehuda.jpg'
+  }, {
+    first: 'Tom',
+    last: 'Dale',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/tom.jpg'
+  }, {
+    first: 'Pete',
+    last: 'Hunt',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/pete.jpg'
+  }, {
+    first: 'Misko',
+    last: 'Hevery',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/misko.png'
+  }, {
+    first: 'Scott',
+    last: 'Miles',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/scott.png'
+  }, {
+    first: 'Matt',
+    last: 'Zabriskie',
+    avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/matt.jpeg'
+  }]
 
-  var to = Object(target);
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-  for (var nextIndex = 1; nextIndex < arguments.length; nextIndex++) {
-    var nextSource = arguments[nextIndex];
-    if (nextSource == null) {
-      continue;
-    }
-
-    var from = Object(nextSource);
-
-    // We don't currently support accessors nor proxies. Therefore this
-    // copy cannot throw. If we ever supported this then we must handle
-    // exceptions and side-effects. We don't support symbols so they won't
-    // be transferred.
-
-    for (var key in from) {
-      if (hasOwnProperty.call(from, key)) {
-        to[key] = from[key];
+  var ContactService = {
+    add(contact, cb) {
+      if (!contact.first || !contact.last || !contact.avatar || !contact.PIN) {
+        return cb(null, 'All fields are required.')
       }
-    }
-  }
-
-  return to;
-};
-
-var CONTACTS = [{
-  first: 'Ryan',
-  last: 'Florence',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/ryan.jpg'
-}, {
-  first: 'Michael',
-  last: 'Jackson',
-  avatar: 'https://pbs.twimg.com/profile_images/574612921541505024/EBEUav5W_400x400.jpeg'
-}, {
-  first: 'Jeremy',
-  last: 'Ashkenas',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/jeremy.jpg'
-}, {
-  first: 'Yehuda',
-  last: 'Katz',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/yehuda.jpg'
-}, {
-  first: 'Tom',
-  last: 'Dale',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/tom.jpg'
-}, {
-  first: 'Pete',
-  last: 'Hunt',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/pete.jpg'
-}, {
-  first: 'Misko',
-  last: 'Hevery',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/misko.png'
-}, {
-  first: 'Scott',
-  last: 'Miles',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/scott.png'
-}, {
-  first: 'Matt',
-  last: 'Zabriskie',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/matt.jpeg'
-}]
-
-var ContactService = {
-  add(contact, cb) {
-    if (!contact.first || !contact.last || !contact.avatar || !contact.PIN) {
-      return cb(null, 'All fields are required.')
-    }
-    // Simulated server-only check
-    var dupe = CONTACTS.some(existing => {
-      return existing.first.toUpperCase() == contact.first.toUpperCase() &&
-             existing.last.toUpperCase() == contact.last.toUpperCase()
-    })
-    if (dupe) {
-      return cb(null, 'Duplicate contact name.')
-    }
-    CONTACTS.push(contact)
-    cb(null)
-  }
-}
-
-var App = React.createClass({
-  render() {
-    return <div className="App">
-      <p>
-        Reuses components from the <a href="http://react-router-mega-demo.herokuapp.com/">React Router Mega Demo</a>,
-        but uses the <code>&lt;Form&gt;</code> component from <a href="https://github.com/insin/react-router-form">react-router-form</a>
-        to automatically retrieve and submit GET form data.
-      </p>
-      <RouteHandler {...this.props}/>
-    </div>
-  }
-})
-
-var Contacts = React.createClass({
-  render() {
-    return <div>
-      <h2>Contacts</h2>
-
-      <Link to="newContact">New Contact</Link>
-      <hr/>
-      {CONTACTS.map(contact => <div className="Contact">
-        <h3>{contact.first} {contact.last}</h3>
-        <img src={contact.avatar}/>
-      </div>)}
-      <hr/>
-      <Link to="newContact">New Contact</Link>
-    </div>
-  }
-})
-
-var NewContact = React.createClass({
-  getInitialState() {
-    return {
-      error: this.props.query._error || null
-    }
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.query._error) {
-      this.setState({error: nextProps.query._error})
-    }
-  },
-
-  _onSubmit(e, contact) {
-    var error = this.state.error
-    if (Object.keys(contact).some(prop => contact[prop] === '')) {
-      e.preventDefault()
-      error = 'All fields are required.'
-    }
-    this.setState({error})
-  },
-
-  render() {
-    var {query} = this.props
-    return <div>
-      <h1>New Contact</h1>
-      <p><em>
-        (Enter a duplicate name to simulate a service call resulting in an error response)
-      </em></p>
-      <div>
-        <Form to="createContact" onSubmit={this._onSubmit}>
-          {this.state.error && <p className="error">{this.state.error}</p>}
-          <p><input name="first" placeholder="first name" defaultValue={query.first || ''}/></p>
-          <p><input name="last" placeholder="last name" defaultValue={query.last || ''}/></p>
-          <p><input name="avatar" placeholder="avatar url" defaultValue={query.avatar || ''}/></p>
-          <p><input name="PIN" type="password" placeholder="PIN" defaultValue={query.PIN || ''}/></p>
-          <p><button type="submit">Add</button> or <Link to="/">Cancel</Link></p>
-        </Form>
-      </div>
-    </div>
-  }
-})
-
-var CreateContact = React.createClass({
-  statics: {
-    willTransitionTo(transition, params, query, cb) {
-      ContactService.add(query, (err, errorMessage) => {
-        if (!errorMessage) {
-          transition.redirect('contacts')
-        }
-        else {
-          transition.redirect('newContact', {}, assign(query, {_error: errorMessage}))
-        }
-        cb()
+      // Simulated server-only check
+      var dupe = CONTACTS.some(existing => {
+        return existing.first.toUpperCase() === contact.first.toUpperCase() &&
+               existing.last.toUpperCase() === contact.last.toUpperCase()
       })
+      if (dupe) {
+        return cb(null, 'Duplicate contact name.')
+      }
+      CONTACTS.push(contact)
+      cb(null)
     }
-  },
-
-  render() {
-    return null
   }
-})
 
-var routes = <Route name="contacts" path="/" handler={App}>
-  <DefaultRoute handler={Contacts}/>
-  <Route name="newContact" handler={NewContact}/>
-  <Route name="createContact" handler={CreateContact}/>
-</Route>
+  var App = React.createClass({
+    render() {
+      return <div className="App">
+        <p>
+          Reuses components from the <a href="http://react-router-mega-demo.herokuapp.com/">React Router Mega Demo</a>,
+          but uses the <code>&lt;Form&gt;</code> component
+          from <a href="https://github.com/insin/react-router-form">react-router-form</a> to
+          automatically retrieve and submit form data.
+        </p>
+        {this.props.children}
+      </div>
+    }
+  })
 
-ReactRouter.run(routes, (Handler, state) => {
-  React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
-})
+  var Contacts = React.createClass({
+    render() {
+      return <div>
+        <h2>Contacts</h2>
 
-}()</script>
+        <Link to="/new-contact">New Contact</Link>
+        <hr/>
+        {CONTACTS.map(contact => <div className="Contact">
+          <h3>{contact.first} {contact.last}</h3>
+          <img src={contact.avatar}/>
+        </div>)}
+        <hr/>
+        <Link to="/new-contact">New Contact</Link>
+      </div>
+    }
+  })
+
+  var NewContact = React.createClass({
+    getInitialState() {
+      return {
+        error: null
+      }
+    },
+
+    componentWillReceiveProps(nextProps) {
+      var {state} = this.props.location
+      var {state: nextState} = nextProps.location
+      if (nextState && nextState.error &&
+         (!state || state.error !== nextState.error)) {
+        this.setState({error: nextState.error})
+      }
+    },
+
+    _onSubmit(e, contact) {
+      var error = this.state.error
+      if (Object.keys(contact).some(prop => contact[prop] === '')) {
+        e.preventDefault()
+        error = 'All fields are required.'
+      }
+      this.setState({error})
+    },
+
+    render() {
+      var {location} = this.props
+      var contact = location.state && location.state.contact || {}
+      return <div>
+        <h1>New Contact</h1>
+        <p><em>
+          (Enter a duplicate name to simulate a service call resulting in an error response)
+        </em></p>
+        <div>
+          <Form method="POST" to="/create-contact" dataKey="contact" onSubmit={this._onSubmit}>
+            {this.state.error && <p className="error">{this.state.error}</p>}
+            <p><input name="first" placeholder="first name" defaultValue={contact.first}/></p>
+            <p><input name="last" placeholder="last name" defaultValue={contact.last}/></p>
+            <p><input name="avatar" placeholder="avatar url" defaultValue={contact.avatar}/></p>
+            <p><input name="PIN" type="password" placeholder="PIN" defaultValue={contact.PIN}/></p>
+            <p><button type="submit">Add</button> or <Link to="/">Cancel</Link></p>
+          </Form>
+        </div>
+      </div>
+    }
+  })
+
+  function handleCreateContact({location}, replaceState, cb) {
+    var {contact} = location.state
+    ContactService.add(contact, (_, error) => {
+      if (!error) {
+        replaceState(null, '/')
+      }
+      else {
+        replaceState({contact, error}, '/new-contact')
+      }
+      cb()
+    })
+  }
+
+  var routes = <Route path="/" component={App}>
+    <IndexRoute component={Contacts}/>
+    <Route path="new-contact" component={NewContact}/>
+    <Route path="create-contact" onEnter={handleCreateContact}/>
+  </Route>
+
+  ReactDOM.render(<Router routes={routes}/>, document.querySelector('#app'))
+})()
+</script>
 </body>

@@ -1,0 +1,10 @@
+dist/
+src/
+test/
+.babelrc
+.eslintrc
+.eslintignore
+.gitignore
+.travis.yml
+webpack.config.js
+webpack.prod.config.js

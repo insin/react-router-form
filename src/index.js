@@ -1,8 +1,5 @@
-'use strict';
-
 var getFormData = require('get-form-data')
 var React = require('react')
-var assign = require('react/lib/Object.assign')
 
 /**
  * <Form> components are used to create a <form> element that submits its input
@@ -10,38 +7,43 @@ var assign = require('react/lib/Object.assign')
  *
  * For example, assuming you have the following route:
  *
- *   <Route name="addPost" path="/topics/:topicID/addPost" handler={AddPost}/>
+ *   <Route path="/topics/:topicID/add-post" onEnter={handleAddPost}/>
  *
  * You could use the following component to submit a form's input data to that
- * route:
+ * route as location state:
  *
- *   <Form to="addPost" params={{ topicID: "123" }}>
+ *   <Form to={`/topics/${topicID}/add-post`}>
  */
 var Form = React.createClass({
-
   displayName: 'Form',
 
   contextTypes: {
-    router: React.PropTypes.func
+    history: React.PropTypes.object
   },
 
   propTypes: {
     component: React.PropTypes.any,
-    to: React.PropTypes.string.isRequired,
-    params: React.PropTypes.object,
+    dataKey: React.PropTypes.string,
+    extractFormData: React.PropTypes.func,
+    methodKey: React.PropTypes.string,
+    onSubmit: React.PropTypes.func,
     query: React.PropTypes.object,
-    onSubmit: React.PropTypes.func
+    state: React.PropTypes.object,
+    to: React.PropTypes.string.isRequired
   },
 
   getDefaultProps() {
     return {
       component: 'form',
-      method: 'GET'
+      dataKey: 'body',
+      extractFormData: getFormData,
+      method: 'GET',
+      methodKey: 'method'
     }
   },
 
   handleSubmit(event) {
-    var formData = getFormData(event.target)
+    var formData = this.props.extractFormData(event.target)
     var allowTransition = true
     var submitResult
 
@@ -56,39 +58,37 @@ var Form = React.createClass({
     event.preventDefault()
 
     if (allowTransition) {
+      var state = this.props.state
+      var to = this.props.to
+      var query = this.props.query
       if (this.props.method === 'GET') {
-        // GET submissions use the query string, so just marge form data into it
-        this.context.router.transitionTo(
-          this.props.to,
-          this.props.params,
-          assign({}, this.props.query, formData)
-        )
+        // GET submissions use the query string, so just merge form data into it
+        query = {...query, ...formData}
       }
       else {
-        // HACK - add data to the query string along with a dummy method indicator
-        this.context.router.transitionTo(
-          this.props.to,
-          this.props.params,
-          assign({}, this.props.query, formData, {_method: this.props.method})
-        )
+        state = {
+          ...state,
+          ...{
+            [this.props.methodKey]: this.props.method,
+            [this.props.dataKey]: formData
+          }
+        }
       }
+      this.context.history.pushState(state, to, query)
     }
   },
 
-  /**
-   * Returns the value of the "action" attribute to use on the DOM element.
-   */
-  getAction() {
-    return this.context.router.makeHref(this.props.to, this.props.params, this.props.query)
-  },
-
   render() {
-    var props = assign({}, this.props, {
-      action: this.getAction(),
-      onSubmit: this.handleSubmit
-    })
+    var {component, dataKey, methodKey, onSubmit, query, state, to, ...props} = this.props
+    var {history} = this.context
 
-    return React.createElement(this.props.component, props, this.props.children)
+    props.onSubmit = this.handleSubmit
+
+    if (history) {
+      props.action = history.createHref(to, query)
+    }
+
+    return <this.props.component {...props}/>
   }
 })
 
