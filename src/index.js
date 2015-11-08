@@ -1,5 +1,5 @@
-var getFormData = require('get-form-data')
-var React = require('react')
+import getFormData from 'get-form-data'
+import React from 'react'
 
 /**
  * <Form> components are used to create a <form> element that submits its input
@@ -12,9 +12,9 @@ var React = require('react')
  * You could use the following component to submit a form's input data to that
  * route as location state:
  *
- *   <Form to={`/topics/${topicID}/add-post`}>
+ *   <Form to={`/topics/${topicID}/add-post`} method="POST">
  */
-var Form = React.createClass({
+let Form = React.createClass({
   displayName: 'Form',
 
   contextTypes: {
@@ -43,9 +43,9 @@ var Form = React.createClass({
   },
 
   handleSubmit(event) {
-    var formData = this.props.extractFormData(event.target)
-    var allowTransition = true
-    var submitResult
+    let formData = this.props.extractFormData(event.target)
+    let allowTransition = true
+    let submitResult
 
     if (this.props.onSubmit) {
       submitResult = this.props.onSubmit(event, formData)
@@ -58,10 +58,9 @@ var Form = React.createClass({
     event.preventDefault()
 
     if (allowTransition) {
-      var state = this.props.state
-      var to = this.props.to
-      var query = this.props.query
-      if (this.props.method === 'GET') {
+      let {dataKey, method, methodKey, query, state, to} = this.props
+
+      if (method === 'GET') {
         // GET submissions use the query string, so just merge form data into it
         query = {...query, ...formData}
       }
@@ -69,8 +68,8 @@ var Form = React.createClass({
         state = {
           ...state,
           ...{
-            [this.props.methodKey]: this.props.method,
-            [this.props.dataKey]: formData
+            [methodKey]: method,
+            [dataKey]: formData
           }
         }
       }
@@ -79,8 +78,8 @@ var Form = React.createClass({
   },
 
   render() {
-    var {component, dataKey, extractFormData, methodKey, onSubmit, query, state, to, ...props} = this.props
-    var {history} = this.context
+    let {component, dataKey, extractFormData, methodKey, onSubmit, query, state, to, ...props} = this.props
+    let {history} = this.context
 
     props.onSubmit = this.handleSubmit
 
@@ -92,4 +91,4 @@ var Form = React.createClass({
   }
 })
 
-module.exports = Form
+export default Form
