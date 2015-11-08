@@ -62,7 +62,7 @@ let Form = React.createClass({
 
       if (method === 'GET') {
         // GET submissions use the query string, so just merge form data into it
-        query = {...query, ...formData}
+        query = {...query || {}, ...formData}
       }
       else {
         state = {
