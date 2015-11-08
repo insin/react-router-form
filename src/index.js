@@ -7,12 +7,12 @@ import React from 'react'
  *
  * For example, assuming you have the following route:
  *
- *   <Route path="/topics/:topicID/add-post" onEnter={handleAddPost}/>
+ *   <Route path="/topics/:topicId/add-post" onEnter={handleAddPost}/>
  *
  * You could use the following component to submit a form's input data to that
  * route as location state:
  *
- *   <Form to={`/topics/${topicID}/add-post`} method="POST">
+ *   <Form to={`/topics/${topicId}/add-post`} method="POST">
  */
 let Form = React.createClass({
   displayName: 'Form',
