@@ -1,5 +1,8 @@
 ## React Router `<Form>`
 
+[![Travis][build-badge]][build]
+[![Codecov][coverage-badge]][coverage]
+
 A `<Form>` component for use with [React Router](https://github.com/rackt/react-router) which does for `<form>` what react-router's `<Link>` does for `<a>`.
 
 ## Usage
@@ -67,3 +70,9 @@ Browser bundles export a global `ReactRouterForm` variable and expect to find gl
 * [react-router-form.min.js](https://npmcdn.com/react-router-form/dist/react-router-form.min.js) (compressed production version)
 
 ## MIT Licensed
+
+[build-badge]: https://img.shields.io/travis/insin/react-router-form/master.svg
+[build]: https://travis-ci.org/insin/react-router-form
+
+[coverage-badge]: https://img.shields.io/codecov/c/github/insin/react-router-form.svg
+[coverage]: https://codecov.io/github/insin/react-router-form
