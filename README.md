@@ -7,26 +7,29 @@ A `<Form>` component for use with [React Router](https://github.com/rackt/react-
 
 ## Usage
 
-A `<Form>` component renders a `<form>` element and uses its `onSubmit` event to extract input data form form elements and transition to a new route with input data in the location state.
+A `<Form>` component renders a `<form>` element with the contents you provide, hooks into the form's `onSubmit` event to extract user input and transitions to the configured route with user input data in the next location's state.
 
 ```javascript
+import React from 'react'
+import Form from 'react-router-form'
+
 let NewPost = React.createClass({
   render() {
-    <Form to={`/topics/${topicId}/add-post`} method="POST">
+    <Form to={`/topics/${this.props.params.topicId}/add-post`} method="POST">
       <textarea name="comment"/>
       <button type="submit">Add Post</button>
     </Form>
   }
 })
 ```
-For example, assuming you have the following routes, the component above would trigger the `onEnter` handler for the `add-post` route:
+For example, assuming you have the following routes, the component above would trigger the `onEnter` handler for the `add-post` route when the form is submitted:
 
 ``` javascript
 <Route path="/topics/:topicId/new-post" component={NewPost}/>
 <Route path="/topics/:topicId/add-post" onEnter={handleAddPost}/>
 ```
 
-By default, form data is set as a `body` property and the form's `method` is set as a `method` property in the next location's state:
+Form data is set as a `body` property and the form's `method` is set as a `method` property in the next location's state:
 
 ```javascript
 function handleAddPost(nextState, replaceState) {
@@ -35,7 +38,11 @@ function handleAddPost(nextState, replaceState) {
 }
 ```
 
-It's more likely that you'll want to do something with the data, then decide what to do next:
+## Goals
+
+One of the key goals of this component is to make it easier to implement basic isomorphic forms in your React app.
+
+If your `onEnter` handlers send back everything needed to re-render a form which has errors (i.e. validation errors *and* user input), then for a litle extra effort your React components can handle form submissions on both client and server:
 
 ```javascript
 function handleAddPost({location}, replaceState, callback) {
@@ -50,8 +57,6 @@ function handleAddPost({location}, replaceState, callback) {
 
 ## Install
 
-**Node**
-
 ````
 npm install react-router-form
 ```
@@ -62,9 +67,7 @@ var Form = require('react-router-form')
 import Form from 'react-router-form'
 ```
 
-**Browser**
-
-Browser bundles export a global `ReactRouterForm` variable and expect to find global ``React`` and `ReactRouter` variables to work with.
+Browser bundles are available, which export a global `ReactRouterForm` variable and expect to find global ``React`` and `ReactRouter` variables to work with.
 
 * [react-router-form.js](https://npmcdn.com/react-router-form/dist/react-router-form.js) (development version)
 * [react-router-form.min.js](https://npmcdn.com/react-router-form/dist/react-router-form.min.js) (compressed production version)
