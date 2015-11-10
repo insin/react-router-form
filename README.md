@@ -2,6 +2,7 @@
 
 [![Travis][build-badge]][build]
 [![Codecov][coverage-badge]][coverage]
+[![npm package][npm-badge]][npm]
 
 A `<Form>` component for use with [React Router](https://github.com/rackt/react-router) which does for `<form>` what react-router's `<Link>` does for `<a>`.
 
@@ -79,3 +80,6 @@ Browser bundles are available, which export a global `ReactRouterForm` variable 
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/insin/react-router-form.svg
 [coverage]: https://codecov.io/github/insin/react-router-form
+
+[npm-badge]: https://img.shields.io/npm/v/react-router-form.svg
+[npm]: https://www.npmjs.org/package/react-router-form
