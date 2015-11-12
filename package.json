@@ -1,7 +1,7 @@
 {
   "name": "react-router-form",
   "description": "<Form> is to <form> as <Link> is to <a>",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/index.js",
   "jsnext:main": "src/index.js",
   "global": "ReactRouterForm",
