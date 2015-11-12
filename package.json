@@ -21,7 +21,7 @@
     "umd"
   ],
   "dependencies": {
-    "get-form-data": "^1.2.3"
+    "get-form-data": "^1.2.4"
   },
   "peerDependencies": {
     "react": ">=0.14.0",
