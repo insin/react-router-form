@@ -159,10 +159,4 @@ let routes = <Route path="/" component={App}>
   <Route path="create-contact" onEnter={handleCreateContact}/>
 </Route>
 
-var app = document.querySelector('#app')
-if (!app) {
-  app = document.createElement('div')
-  app.id = 'app'
-  document.body.appendChild(app)
-}
-render(<Router routes={routes}/>, app)
+render(<Router routes={routes}/>, document.querySelector('#demo'))

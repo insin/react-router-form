@@ -68,7 +68,7 @@ var Form = require('react-router-form')
 import Form from 'react-router-form'
 ```
 
-Browser bundles are available, which export a global `ReactRouterForm` variable and expect to find global ``React`` and `ReactRouter` variables to work with.
+Browser bundles are available, which export a global `ReactRouterForm` variable and expects to find a global ``React`` variable to work with.
 
 * [react-router-form.js](https://npmcdn.com/react-router-form/umd/react-router-form.js) (development version)
 * [react-router-form.min.js](https://npmcdn.com/react-router-form/umd/react-router-form.min.js) (compressed production version)

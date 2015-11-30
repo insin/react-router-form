@@ -3,17 +3,14 @@
   "description": "<Form> is to <form> as <Link> is to <a>",
   "version": "1.0.2",
   "main": "lib/index.js",
-  "jsnext:main": "src/index.js",
-  "global": "ReactRouterForm",
-  "externals": {
-    "react": "React",
-    "react-router": "ReactRouter"
-  },
   "homepage": "https://github.com/insin/react-router-form",
   "license": "MIT",
   "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
   "scripts": {
-    "test": "nwb test"
+    "build": "eslint src demo/src && nwb build",
+    "clean": "nwb clean",
+    "start": "nwb serve",
+    "test": "eslint src tests && nwb test"
   },
   "files": [
     "lib",
@@ -28,11 +25,12 @@
     "react-router": ">=1.0.0"
   },
   "devDependencies": {
-    "nwb": "*",
-    "history": "1.13.0",
-    "react": "0.14.2",
-    "react-addons-test-utils": "0.14.2",
-    "react-dom": "0.14.2",
+    "eslint-config-jonnybuchanan": "2.0.x",
+    "nwb": ">0.1.0-alpha <0.2",
+    "history": "1.13.1",
+    "react": "0.14.3",
+    "react-addons-test-utils": "0.14.3",
+    "react-dom": "0.14.3",
     "react-router": "1.0.0"
   },
   "repository": {
