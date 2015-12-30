@@ -1,5 +1,5 @@
 import getFormData from 'get-form-data'
-import React from 'react'
+import React, {PropTypes} from 'react'
 
 /**
  * <Form> components are used to create a <form> element that submits its input
@@ -18,18 +18,19 @@ let Form = React.createClass({
   displayName: 'Form',
 
   contextTypes: {
-    history: React.PropTypes.object
+    history: PropTypes.object
   },
 
   propTypes: {
-    component: React.PropTypes.any,
-    dataKey: React.PropTypes.string,
-    extractFormData: React.PropTypes.func,
-    methodKey: React.PropTypes.string,
-    onSubmit: React.PropTypes.func,
-    query: React.PropTypes.object,
-    state: React.PropTypes.object,
-    to: React.PropTypes.string.isRequired
+    to: PropTypes.string.isRequired,
+
+    component: PropTypes.any,
+    dataKey: PropTypes.string,
+    extractFormData: PropTypes.func,
+    methodKey: PropTypes.string,
+    onSubmit: PropTypes.func,
+    query: PropTypes.object,
+    state: PropTypes.object
   },
 
   getDefaultProps() {
