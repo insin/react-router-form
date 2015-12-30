@@ -48,7 +48,7 @@ describe('Form', () => {
       renderForm(
         () => <Form to="/path" query={{foo: 1, bar: 2}}/>,
         form => {
-          expect(form.getAttribute('action')).toEqual('/path?foo=1&bar=2', 'action attribute uses the query prop if given')
+          expect(form.getAttribute('action')).toInclude('foo=1').toInclude('bar=2')
           done()
         }
       )

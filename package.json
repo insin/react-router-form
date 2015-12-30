@@ -1,38 +1,38 @@
 {
   "name": "react-router-form",
+  "version": "1.0.3",
   "description": "<Form> is to <form> as <Link> is to <a>",
-  "version": "1.0.2",
   "main": "lib/index.js",
-  "homepage": "https://github.com/insin/react-router-form",
-  "license": "MIT",
-  "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
-  "scripts": {
-    "build": "eslint src demo/src && nwb build",
-    "clean": "nwb clean",
-    "start": "nwb serve",
-    "test": "eslint src tests && nwb test"
-  },
+  "jsnext:main": "es6/index.js",
   "files": [
+    "es6",
     "lib",
-    "src",
     "umd"
   ],
+  "scripts": {
+    "build": "npm run lint && nwb build",
+    "lint": "eslint src tests demo/src",
+    "start": "nwb serve",
+    "test": "npm run build && nwb test"
+  },
   "dependencies": {
-    "get-form-data": "^1.2.4"
+    "get-form-data": "1.x"
   },
   "peerDependencies": {
-    "react": ">=0.14.0",
-    "react-router": ">=1.0.0"
+    "react": ">=0.14.0"
   },
   "devDependencies": {
     "eslint-config-jonnybuchanan": "2.0.x",
-    "nwb": ">0.1.0-alpha <0.2",
-    "history": "1.13.1",
-    "react": "0.14.3",
-    "react-addons-test-utils": "0.14.3",
-    "react-dom": "0.14.3",
-    "react-router": "1.0.0"
+    "nwb": "0.6.x",
+    "history": "1.17.x",
+    "react": "0.14.x",
+    "react-addons-test-utils": "0.14.x",
+    "react-dom": "0.14.x",
+    "react-router": "1.0.3"
   },
+  "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
+  "homepage": "https://github.com/insin/react-router-form",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/insin/react-router-form.git"
