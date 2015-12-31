@@ -28,7 +28,7 @@
     "react": "0.14.x",
     "react-addons-test-utils": "0.14.x",
     "react-dom": "0.14.x",
-    "react-router": ">=2.0.0-rc"
+    "react-router": "2.0.0-rc4"
   },
   "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
   "homepage": "https://github.com/insin/react-router-form",
