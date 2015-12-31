@@ -83,7 +83,7 @@ let Contacts = React.createClass({
 
       <Link to="/new-contact">New Contact</Link>
       <hr/>
-      {CONTACTS.map(contact => <div className="Contact">
+      {CONTACTS.map((contact, index) => <div className="Contact" key={index}>
         <h3>{contact.first} {contact.last}</h3>
         <img src={contact.avatar}/>
       </div>)}
