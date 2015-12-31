@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "react": ">=0.14.0",
-    "react-router": ">=2.0.0-rc3 < 2"
+    "react-router": ">=2.0.0-rc3 < 3"
   },
   "devDependencies": {
     "eslint-config-jonnybuchanan": "2.0.x",
