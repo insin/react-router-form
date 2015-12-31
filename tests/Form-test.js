@@ -1,5 +1,5 @@
 import expect from 'expect'
-import createHistory from 'history/lib/createMemoryHistory'
+import createHistory from 'react-router/lib/createMemoryHistory'
 import React from 'react'
 import {render, unmountComponentAtNode} from 'react-dom'
 import {Router, Route} from 'react-router'
@@ -35,7 +35,7 @@ describe('Form', () => {
       renderForm(
         () => <Form to="/add-thing" method="POST" name="test-form" acceptCharset="UTF-8"/>,
         form => {
-          expect(form.getAttribute('action')).toEqual('/add-thing', 'action attribute is set based on the "to" prop')
+          expect(form.getAttribute('action')).toEqual('/add-thing')
           expect(form.getAttribute('method')).toEqual('POST', 'method prop is passed through')
           expect(form.getAttribute('name')).toEqual('test-form', 'name prop is passed through')
           expect(form.getAttribute('accept-charset')).toEqual('UTF-8', 'acceptCharset prop is passed through')
@@ -47,6 +47,16 @@ describe('Form', () => {
     it('uses query props in the action attribute', done => {
       renderForm(
         () => <Form to="/path" query={{foo: 1, bar: 2}}/>,
+        form => {
+          expect(form.getAttribute('action')).toInclude('foo=1').toInclude('bar=2')
+          done()
+        }
+      )
+    })
+
+    it('accepts a location descriptor object', done => {
+      renderForm(
+        () => <Form to={{pathname: '/path', query: {foo: 1, bar: 2}}}/>,
         form => {
           expect(form.getAttribute('action')).toInclude('foo=1').toInclude('bar=2')
           done()
@@ -120,9 +130,39 @@ describe('Form', () => {
       )
     })
 
-    it('merges additional query parameters for a GET form into the submitted query string', done => {
+    it('also sets additional location descriptor state on location.state', done => {
+      renderFormSubmit(
+        FormWrapper('POST', {to: {pathname: '/submit', state: {answer: 42}}}),
+        ({location}, replaceState) => {
+          expect(location.state.answer).toEqual(42, 'POST form additional state set in location.state')
+          expect(location.state.body).toEqual(
+            {name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
+            'POST form data still set in location.state.body'
+          )
+          done()
+        },
+        form => submit(form)
+      )
+    })
+
+    it('merges additional query prop for a GET form into the submitted query string', done => {
       renderFormSubmit(
         FormWrapper('GET', {state: {question: 'que?'}, query: {answer: 42}}),
+        ({location}, replaceState) => {
+          expect(location.state.question).toEqual('que?', 'GET form additional state set in location.state')
+          expect(location.query).toEqual(
+            {answer: '42', name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
+            'GET form additional query data set in location.query'
+          )
+          done()
+        },
+        form => submit(form)
+      )
+    })
+
+    it('merges additional location descriptor query for a GET form into the submitted query string', done => {
+      renderFormSubmit(
+        FormWrapper('GET', {to: {pathname: '/submit', state: {question: 'que?'}, query: {answer: 42}}}),
         ({location}, replaceState) => {
           expect(location.state.question).toEqual('que?', 'GET form additional state set in location.state')
           expect(location.query).toEqual(

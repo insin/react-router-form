@@ -10,7 +10,7 @@ A `<Form>` component for use with [React Router](https://github.com/rackt/react-
 
 A `<Form>` component renders a `<form>` element with the contents you provide, hooks into the form's `onSubmit` event to extract user input and transitions to the configured route with user input data in the next location's state.
 
-```javascript
+```js
 import React from 'react'
 import Form from 'react-router-form'
 
@@ -32,7 +32,7 @@ For example, assuming you have the following routes, the component above would t
 
 Form data is set as a `body` property and the form's `method` is set as a `method` property in the next location's state:
 
-```javascript
+```js
 function handleAddPost(nextState, replaceState) {
   console.log(nextState.location.state.method) // 'POST'
   console.log(nextState.location.state.body) // {comment: '...'}
@@ -45,7 +45,7 @@ One of the key goals of this component is to make it easier to implement basic i
 
 If your `onEnter` handlers send back everything needed to re-render a form which has errors (i.e. validation errors *and* user input), then for a litle extra effort your React components can handle form submissions on both client and server:
 
-```javascript
+```js
 function handleAddPost({location}, replaceState, callback) {
   let comment = location.state.body
   let {topicId} = location.state.params
@@ -62,7 +62,7 @@ function handleAddPost({location}, replaceState, callback) {
 npm install react-router-form
 ```
 
-```javascript
+```js
 var Form = require('react-router-form')
 // or
 import Form from 'react-router-form'

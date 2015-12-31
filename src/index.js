@@ -1,6 +1,17 @@
 import getFormData from 'get-form-data'
 import React, {PropTypes} from 'react'
 
+let {toString} = Object.prototype
+
+let typeOf = o => toString.call(o).slice(8, -1).toLowerCase()
+
+function createLocationDescriptor({to, query, state}) {
+  if (typeOf(to) === 'string') {
+    return {pathname: to, query, state}
+  }
+  return {query, state, ...to}
+}
+
 /**
  * <Form> components are used to create a <form> element that submits its input
  * data to a route.
@@ -18,11 +29,11 @@ let Form = React.createClass({
   displayName: 'Form',
 
   contextTypes: {
-    history: PropTypes.object
+    router: PropTypes.object
   },
 
   propTypes: {
-    to: PropTypes.string.isRequired,
+    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
 
     component: PropTypes.any,
     dataKey: PropTypes.string,
@@ -60,32 +71,31 @@ let Form = React.createClass({
 
     if (allowTransition) {
       let {dataKey, method, methodKey, query, state, to} = this.props
+      let submitLocation = createLocationDescriptor({to, query, state})
 
       if (method === 'GET') {
         // GET submissions use the query string, so just merge form data into it
-        query = {...query || {}, ...formData}
+        submitLocation.query = {...submitLocation.query, ...formData}
       }
       else {
-        state = {
-          ...state,
-          ...{
-            [methodKey]: method,
-            [dataKey]: formData
-          }
+        submitLocation.state = {
+          ...submitLocation.state,
+          [methodKey]: method,
+          [dataKey]: formData
         }
       }
-      this.context.history.pushState(state, to, query)
+      this.context.router.push(submitLocation)
     }
   },
 
   render() {
     let {component, dataKey, extractFormData, methodKey, onSubmit, query, state, to, ...props} = this.props
-    let {history} = this.context
+    let {router} = this.context
 
     props.onSubmit = this.handleSubmit
 
-    if (history) {
-      props.action = history.createHref(to, query)
+    if (router) {
+      props.action = router.createHref(createLocationDescriptor({to, query}))
     }
 
     return <this.props.component {...props}/>

@@ -1,3 +1,7 @@
+Updated to the React Router v2 API.
+
+`to` can now take a location descriptor object.
+
 # 1.0.2 / 2015-11-12
 
 Changed how the module is published to npm.

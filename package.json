@@ -19,16 +19,16 @@
     "get-form-data": "1.x"
   },
   "peerDependencies": {
-    "react": ">=0.14.0"
+    "react": ">=0.14.0",
+    "react-router": ">=2.0.0-rc"
   },
   "devDependencies": {
     "eslint-config-jonnybuchanan": "2.0.x",
     "nwb": "0.6.x",
-    "history": "1.17.x",
     "react": "0.14.x",
     "react-addons-test-utils": "0.14.x",
     "react-dom": "0.14.x",
-    "react-router": "1.0.3"
+    "react-router": ">=2.0.0-rc"
   },
   "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
   "homepage": "https://github.com/insin/react-router-form",

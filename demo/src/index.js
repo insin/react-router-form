@@ -2,7 +2,7 @@ import './style.css'
 
 import React from 'react'
 import {render} from 'react-dom'
-import {IndexRoute, Link, Route, Router} from 'react-router'
+import {IndexRoute, Link, Route, Router, hashHistory} from 'react-router'
 
 import Form from '../../src'
 
@@ -159,4 +159,4 @@ let routes = <Route path="/" component={App}>
   <Route path="create-contact" onEnter={handleCreateContact}/>
 </Route>
 
-render(<Router routes={routes}/>, document.querySelector('#demo'))
+render(<Router history={hashHistory} routes={routes}/>, document.querySelector('#demo'))
