@@ -1,3 +1,5 @@
+# 2.0.0-rc.0 / 2016-01-01
+
 Updated to the React Router v2 API.
 
 `to` can now take a location descriptor object.

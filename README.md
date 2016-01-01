@@ -59,7 +59,11 @@ function handleAddPost({location}, replaceState, callback) {
 ## Install
 
 ````
+# For React Router 1.x
 npm install react-router-form
+
+# For React Router 2.x
+npm install react-router-form@next
 ```
 
 ```js
