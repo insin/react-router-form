@@ -74,8 +74,13 @@ let Form = React.createClass({
       let submitLocation = createLocationDescriptor({to, query, state})
 
       if (method === 'GET') {
+        const compactedFormData = Object.keys(formData).reduce((acc, curr) => {
+          if (formData[curr]) acc[curr] = formData[curr]
+          return acc
+        }, {})
+
         // GET submissions use the query string, so just merge form data into it
-        submitLocation.query = {...submitLocation.query, ...formData}
+        submitLocation.query = {...submitLocation.query, ...compactedFormData}
       }
       else {
         submitLocation.state = {
