@@ -74,8 +74,8 @@ import Form from 'react-router-form'
 
 Browser bundles are available, which export a global `ReactRouterForm` variable and expects to find a global ``React`` variable to work with.
 
-* [react-router-form.js](https://npmcdn.com/react-router-form/umd/react-router-form.js) (development version)
-* [react-router-form.min.js](https://npmcdn.com/react-router-form/umd/react-router-form.min.js) (compressed production version)
+* [react-router-form.js](https://unpkg.com/react-router-form/umd/react-router-form.js) (development version)
+* [react-router-form.min.js](https://unpkg.com/react-router-form/umd/react-router-form.min.js) (compressed production version)
 
 ## MIT Licensed
 
