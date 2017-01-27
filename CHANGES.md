@@ -1,3 +1,11 @@
+# 3.0.0 / 2017-01-28
+
+Updated for React Router v3.
+
+- Dropped `state` and `query` props.
+- Supports React Router v3's solution for working around context updates failing to propagate.
+- `to` can now be a function which takes a `location` object.
+
 # 2.0.0-rc.0 / 2016-01-01
 
 Updated to the React Router v2 API.
