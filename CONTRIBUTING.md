@@ -1,11 +1,25 @@
-This project uses [nwb](https://github.com/insin/nwb) for building and running tests, with common development commands configured as npm run scripts. If you have nwb installed globally, you can use it directly insted of the npm run scripts below.
+## Prerequisites
 
-## Developing
+[Node.js](http://nodejs.org/) >= v4 must be installed.
 
-Use `npm run test:watch` to start a Karma server which runs units tests on every change.
+## Installation
 
-Use `npm test` to lint, build and run tests before submitting a Pull Request - Travis CI will be running this too.
+- Running `npm install` in the components's root directory will install everything you need for development.
 
-If you're tweaking or testing the demo app, you can start a hot reloaded version of it using `npm start`.
+## Demo Development Server
 
-To lint code, run `npm run lint`.
+- `npm start` will run a development server with the component's demo app at [http://localhost:3000](http://localhost:3000) with hot module reloading.
+
+## Running Tests
+
+- `npm test` will run the tests once.
+
+- `npm run test:coverage` will run the tests and produce a coverage report in `coverage/`.
+
+- `npm run test:watch` will run the tests on every change.
+
+## Building
+
+- `npm run build` will build the component for publishing to npm and also bundle the demo app.
+
+- `npm run clean` will delete built resources.

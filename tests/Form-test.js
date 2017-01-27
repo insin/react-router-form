@@ -44,16 +44,6 @@ describe('Form', () => {
       )
     })
 
-    it('uses query props in the action attribute', done => {
-      renderForm(
-        () => <Form to="/path" query={{foo: 1, bar: 2}}/>,
-        form => {
-          expect(form.getAttribute('action')).toInclude('foo=1').toInclude('bar=2')
-          done()
-        }
-      )
-    })
-
     it('accepts a location descriptor object', done => {
       renderForm(
         () => <Form to={{pathname: '/path', query: {foo: 1, bar: 2}}}/>,
@@ -89,7 +79,7 @@ describe('Form', () => {
     it('sets POST form data in location.state', done => {
       renderFormSubmit(
         FormWrapper('POST'),
-        ({location}, replaceState) => {
+        ({location}, replace) => {
           expect(location.state.method).toEqual('POST', 'Form method set in location.state.method')
           expect(location.state.body).toEqual(
             {name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
@@ -104,25 +94,10 @@ describe('Form', () => {
     it('sets GET form data in location.query', done => {
       renderFormSubmit(
         FormWrapper('GET'),
-        ({location}, replaceState) => {
-          expect(location.query).toEqual(
+        ({location}, replace) => {
+          expect(location.query).toMatch(
             {name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
             'GET form data set in location.query'
-          )
-          done()
-        },
-        form => submit(form)
-      )
-    })
-
-    it('also sets additional state props on location.state', done => {
-      renderFormSubmit(
-        FormWrapper('POST', {state: {answer: 42}}),
-        ({location}, replaceState) => {
-          expect(location.state.answer).toEqual(42, 'POST form additional state set in location.state')
-          expect(location.state.body).toEqual(
-            {name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
-            'POST form data still set in location.state.body'
           )
           done()
         },
@@ -145,27 +120,12 @@ describe('Form', () => {
       )
     })
 
-    it('merges additional query prop for a GET form into the submitted query string', done => {
-      renderFormSubmit(
-        FormWrapper('GET', {state: {question: 'que?'}, query: {answer: 42}}),
-        ({location}, replaceState) => {
-          expect(location.state.question).toEqual('que?', 'GET form additional state set in location.state')
-          expect(location.query).toEqual(
-            {answer: '42', name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
-            'GET form additional query data set in location.query'
-          )
-          done()
-        },
-        form => submit(form)
-      )
-    })
-
     it('merges additional location descriptor query for a GET form into the submitted query string', done => {
       renderFormSubmit(
         FormWrapper('GET', {to: {pathname: '/submit', state: {question: 'que?'}, query: {answer: 42}}}),
         ({location}, replaceState) => {
           expect(location.state.question).toEqual('que?', 'GET form additional state set in location.state')
-          expect(location.query).toEqual(
+          expect(location.query).toMatch(
             {answer: '42', name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
             'GET form additional query data set in location.query'
           )
@@ -190,47 +150,9 @@ describe('Form', () => {
       )
     })
 
-    it('continues when a custom onSubmit() returns undefined', done => {
-      let onEnter = expect.createSpy()
-      // Provide your own onSubmit() to control form submission
-      renderFormSubmit(
-        FormWrapper('POST', {
-          onSubmit(e, data) {
-            expect(
-              data,
-              {name: 'AzureDiamond', password: 'hunter2', 'accepted': 'accepted'},
-              'Extracted form data is passsed to onSubmit()'
-            )
-          }
-        }),
-        onEnter,
-        form => {
-          submit(form)
-          expect(onEnter).toHaveBeenCalled(
-            'Returning undefined from onSubmit() should not prevent form submission'
-          )
-          done()
-        }
-      )
-    })
-
-    it('is cancelled when a custom onSubmit() returns false', done => {
-      let onEnter = expect.createSpy()
-      renderFormSubmit(
-        FormWrapper('POST', {onSubmit: (e) => false}),
-        onEnter,
-        form => {
-          submit(form)
-          expect(onEnter).toNotHaveBeenCalled(
-            'Returning false from onSubmit() should have prevented form submission'
-          )
-          done()
-        }
-      )
-    })
-
     it('is cancelled if preventDefault() is called in a custom onSubmit()', done => {
       let onEnter = expect.createSpy()
+      // Provide your own onSubmit() to control form submission
       renderFormSubmit(
         FormWrapper('POST', {onSubmit: (e) => e.preventDefault()}),
         onEnter,

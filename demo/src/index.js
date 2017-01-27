@@ -9,39 +9,39 @@ import Form from '../../src'
 let CONTACTS = [{
   first: 'Ryan',
   last: 'Florence',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/ryan.jpg'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/ryan.jpg',
 }, {
   first: 'Michael',
   last: 'Jackson',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/michael.jpg'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/michael.jpg',
 }, {
   first: 'Jeremy',
   last: 'Ashkenas',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/jeremy.jpg'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/jeremy.jpg',
 }, {
   first: 'Yehuda',
   last: 'Katz',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/yehuda.jpg'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/yehuda.jpg',
 }, {
   first: 'Tom',
   last: 'Dale',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/tom.jpg'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/tom.jpg',
 }, {
   first: 'Pete',
   last: 'Hunt',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/pete.jpg'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/pete.jpg',
 }, {
   first: 'Misko',
   last: 'Hevery',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/misko.png'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/misko.png',
 }, {
   first: 'Scott',
   last: 'Miles',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/scott.png'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/scott.png',
 }, {
   first: 'Matt',
   last: 'Zabriskie',
-  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/matt.jpeg'
+  avatar: 'http://ryanflorence.com/jsconf-avatars/avatars/matt.jpeg',
 }]
 
 let ContactService = {
@@ -104,7 +104,7 @@ let NewContact = React.createClass({
     let {state} = this.props.location
     let {state: nextState} = nextProps.location
     if (nextState && nextState.error &&
-       (!state || state.error !== nextState.error)) {
+        (!state || state.error !== nextState.error)) {
       this.setState({error: nextState.error})
     }
   },
@@ -140,14 +140,14 @@ let NewContact = React.createClass({
   }
 })
 
-function handleCreateContact({location}, replaceState, cb) {
+function handleCreateContact({location}, replace, cb) {
   let {contact} = location.state
   ContactService.add(contact, (_, error) => {
     if (!error) {
-      replaceState(null, '/')
+      replace('/')
     }
     else {
-      replaceState({contact, error}, '/new-contact')
+      replace({pathname: '/new-contact', state: {contact, error}})
     }
     cb()
   })

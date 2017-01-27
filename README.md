@@ -1,8 +1,8 @@
 ## React Router `<Form>`
 
 [![Travis][build-badge]][build]
-[![Codecov][coverage-badge]][coverage]
 [![npm package][npm-badge]][npm]
+[![Coveralls][coveralls-badge]][coveralls]
 
 A `<Form>` component for use with [React Router](https://github.com/rackt/react-router) which does for `<form>` what react-router's `<Link>` does for `<a>`.
 
@@ -25,7 +25,7 @@ let NewPost = React.createClass({
 ```
 For example, assuming you have the following routes, the component above would trigger the `onEnter` handler for the `add-post` route when the form is submitted:
 
-``` javascript
+```js
 <Route path="/topics/:topicId/new-post" component={NewPost}/>
 <Route path="/topics/:topicId/add-post" onEnter={handleAddPost}/>
 ```
@@ -43,47 +43,54 @@ function handleAddPost(nextState, replaceState) {
 
 One of the key goals of this component is to make it easier to implement basic isomorphic forms in your React app.
 
-If your `onEnter` handlers send back everything needed to re-render a form which has errors (i.e. validation errors *and* user input), then for a litle extra effort your React components can handle form submissions on both client and server:
+If your `onEnter` handlers send back everything needed to re-render a form which has errors (i.e. validation errors *and* user input), then for a little extra effort your React components can handle form submissions on both client and server:
 
 ```js
-function handleAddPost({location}, replaceState, callback) {
-  let comment = location.state.body
-  let {topicId} = location.state.params
+function handleAddPost(nextState, replace, callback) {
+  let comment = nextState.location.state.body
+  let {topicId} = nextState.params
   ForumService.addComment({comment, topicId})
-    .then(({page}) => replaceState(null, `/topics/${topicId}?page=${page}`))
-    .catch(errors => replaceState({comment, errors}, `/topics/${topicId}/new-post`))
+    .then(({page}) => {
+      replace(`/topics/${topicId}?page=${page}`)
+    })
+    .catch(errors => {
+      replace({
+        pathname: `/topics/${topicId}/new-post`,
+        state: {comment, errors}.
+      })
+    })
     .finally(callback)
 }
 ```
 
 ## Install
 
-````
-# For React Router 1.x
+````sh
+# For React Router 3.x
 npm install react-router-form
 
-# For React Router 2.x
-npm install react-router-form@next
+# For React Router 1.x
+npm install react-router-form@1
 ```
 
 ```js
-var Form = require('react-router-form')
-// or
 import Form from 'react-router-form'
+// or
+const Form = require('react-router-form')
 ```
 
-Browser bundles are available, which export a global `ReactRouterForm` variable and expects to find a global ``React`` variable to work with.
+Browser bundles are available, which export a global `ReactRouterForm` variable and expect to find a global ``React`` variable to work with.
 
 * [react-router-form.js](https://npmcdn.com/react-router-form/umd/react-router-form.js) (development version)
 * [react-router-form.min.js](https://npmcdn.com/react-router-form/umd/react-router-form.min.js) (compressed production version)
 
 ## MIT Licensed
 
-[build-badge]: https://img.shields.io/travis/insin/react-router-form/master.svg
+[build-badge]: https://img.shields.io/travis/insin/react-router-form/master.png?style=flat-square
 [build]: https://travis-ci.org/insin/react-router-form
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/insin/react-router-form.svg
-[coverage]: https://codecov.io/github/insin/react-router-form
-
-[npm-badge]: https://img.shields.io/npm/v/react-router-form.svg
+[npm-badge]: https://img.shields.io/npm/v/react-router-form.png?style=flat-square
 [npm]: https://www.npmjs.org/package/react-router-form
+
+[coveralls-badge]: https://img.shields.io/coveralls/insin/react-router-form/master.png?style=flat-square
+[coveralls]: https://coveralls.io/github/insin/react-router-form
