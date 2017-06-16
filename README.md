@@ -65,7 +65,7 @@ function handleAddPost(nextState, replace, callback) {
 
 ## Install
 
-````sh
+```sh
 # For React Router 3.x
 npm install react-router-form
 
