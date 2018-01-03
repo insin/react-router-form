@@ -1,6 +1,7 @@
 import './style.css'
 
 import React from 'react'
+import createReactClass from 'create-react-class'
 import {render} from 'react-dom'
 import {IndexRoute, Link, Route, Router, hashHistory} from 'react-router'
 
@@ -62,7 +63,7 @@ let ContactService = {
   }
 }
 
-let App = React.createClass({
+let App = createReactClass({
   render() {
     return <div className="App">
       <p>
@@ -76,7 +77,7 @@ let App = React.createClass({
   }
 })
 
-let Contacts = React.createClass({
+let Contacts = createReactClass({
   render() {
     return <div>
       <h2>Contacts</h2>
@@ -93,7 +94,7 @@ let Contacts = React.createClass({
   }
 })
 
-let NewContact = React.createClass({
+let NewContact = createReactClass({
   getInitialState() {
     return {
       error: null

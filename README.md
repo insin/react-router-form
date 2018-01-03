@@ -12,9 +12,10 @@ A `<Form>` component renders a `<form>` element with the contents you provide, h
 
 ```js
 import React from 'react'
+import createReactClass from 'create-react-class'
 import Form from 'react-router-form'
 
-let NewPost = React.createClass({
+let NewPost = createReactClass({
   render() {
     <Form to={`/topics/${this.props.params.topicId}/add-post`} method="POST">
       <textarea name="comment"/>

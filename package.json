@@ -17,21 +17,20 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
+    "create-react-class": "15.x",
     "get-form-data": "1.x",
-    "invariant": "2.x"
+    "invariant": "2.x",
+    "prop-types": "15.x"
   },
   "peerDependencies": {
-    "react": "15.x",
+    "react": "16.x",
     "react-router": "3.x"
   },
   "devDependencies": {
     "eslint-config-jonnybuchanan": "4.8.x",
     "nwb": "0.16.x",
-
-    "react": "15.x",
-    "react-addons-test-utils": "15.x",
-    "react-dom": "15.x",
-
+    "react": "16.x",
+    "react-dom": "16.x",
     "react-router": "3.x"
   },
   "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
