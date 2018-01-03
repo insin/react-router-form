@@ -1,8 +1,9 @@
 import getFormData from 'get-form-data'
 import invariant from 'invariant'
 import React from 'react'
+import PropTypes from 'prop-types'
 
-const {any, func, number, object, oneOfType, shape, string} = React.PropTypes
+const {any, func, number, object, oneOfType, shape, string} = PropTypes
 
 const {toString} = Object.prototype
 
