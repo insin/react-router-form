@@ -3,7 +3,7 @@ import createHistory from 'react-router/lib/createMemoryHistory'
 import React from 'react'
 import {render, unmountComponentAtNode} from 'react-dom'
 import {Router, Route} from 'react-router'
-import {Simulate} from 'react-addons-test-utils'
+import {Simulate} from 'react-dom/test-utils'
 
 import Form from 'src/index'
 
