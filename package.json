@@ -17,6 +17,7 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
+    "create-react-class": "15.x",
     "get-form-data": "1.x",
     "invariant": "2.x",
     "prop-types": "15.x"

@@ -2,6 +2,7 @@ import getFormData from 'get-form-data'
 import invariant from 'invariant'
 import React from 'react'
 import PropTypes from 'prop-types'
+import createReactClass from 'create-react-class'
 
 const {any, func, number, object, oneOfType, shape, string} = PropTypes
 
@@ -102,7 +103,7 @@ function ContextSubscriber(name) {
  *
  *   <Form to={`/topics/${topicId}/add-post`} method="POST">
  */
-const Form = React.createClass({
+const Form = createReactClass({
   displayName: 'Form',
 
   mixins: [ContextSubscriber('router')],
